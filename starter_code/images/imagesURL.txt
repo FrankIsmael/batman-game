@@ -1,0 +1,23 @@
+batmanScared https://media3.giphy.com/media/26xBw8wK4kCDjEUzm/giphy.gif
+
+
+codigo game
+
+class background
+    dibuja la imagen y la repone 
+
+this.audio = new Audio()
+this.audio.src = ''
+this.audio.loop = true se escucha siempre 
+
+class Character {
+
+}
+
+// drawImage(img,sx,sy,swidth,sheight,x,y,width,height) 
+para los split vamos sumando sx ==> this.sx +=350
+// encontrar un gif
+
+case 13:
+    background.audio play()
+    return start()
