@@ -47,10 +47,55 @@ class BatBoard {
     }
 }
 
+/*
+const player = {
+    x: 5,
+    y: canvas.height - 50,
+    width: 80,
+    height: 80,
+    speed: 5,
+    velX: 0,
+    velY: 0,
+    color: 'orange',
+    jumping: false,
+    jumpStrength: 4,
+    grounded: false,
+    draw: function() {
+      ctx.fillStyle = this.color
+      ctx.fillRect(this.x, this.y, this.width, this.height)
+    }
+  }*/
+
+class Player{
+    constructor(imgR,imgL){
+        this.imgR = new Image()
+        this.imgR.src = imgR
+        this.imgL = new Image()
+        this.imgR.src = imgL
+        this.sx = 0
+        this.sy = 0
+        width = 114
+        height = 152
+        this.x = 5
+        this.y = canvas.height - 50
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/*
 // characters
 class Character {
     constructor(x, y, img) {
-        this.x = 200
+        this.x = 100
         this.y = canvas.height - 100
         this.img = new Image()
         this.img.src = img
@@ -60,7 +105,7 @@ class Character {
         this.velX = 0
         this.velY = 0
         this.jumping = false
-        this.jumpStrength = 7
+        this.jumpStrength = 1
         this.grounded = false
     }
     draw() {
@@ -82,7 +127,6 @@ class Character {
 
         this.sx += 228
         if (this.sx > 1823) this.sx = 228
-
     }
     moveLeft() {
         //this.img.src = images.batmanL
@@ -93,13 +137,13 @@ class Character {
     moveUp() {
         this.y -= 5
     }
-    moveDown() {
+    /* moveDown() {
         this.y += 5
-    }
-}
+    } 
+}*/
 
 const boardBatman = new BatBoard(images.gotham)
-const batman = new Character(200, 200, images.batmanR, 114, 152)
+const batman = new Character(200, 400, images.batmanR, 114, 152)
 //const superman = new Character(0,100,images.superman_fly,60,60)
 /*const bane = new Character(200,0,images.bane,70,93)
 const mario = new Character(100,50,images.mario,40,40) */
@@ -175,10 +219,10 @@ function update() {
             batman.velX--
         }
     }
-
+    
     //jump
     batman.y += batman.velY
-    batman.velY += gravity
+    //batman.velY += gravity
 
     //movimiento
     batman.x += batman.velX
@@ -186,7 +230,7 @@ function update() {
 
     //collition
     batman.grounded = false
-    platforms.map(platform => {
+    /* platforms.map(platform => {
         const direction = collisionCheck(batman, platform)
         if (direction == 'left' || direction == 'right') {
             batman.velX = 0
@@ -200,9 +244,11 @@ function update() {
 
     if (batman.grounded) {
         batman.velY = 0
-    }
+    } */
+    
 }
 
+/*
 function collisionCheck(char, plat) {
     const vectorX = char.x + char.width / 2 - (plat.x + plat.width / 2)
     const vectorY = char.y + char.height / 2 - (plat.y + plat.height / 2)
@@ -234,7 +280,7 @@ function collisionCheck(char, plat) {
         }
     }
     return collisionDirection
-}
+}*/
 
 function startGame() {
     gameStarted = true
