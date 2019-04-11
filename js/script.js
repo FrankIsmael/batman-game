@@ -4,28 +4,24 @@ const ctx = canvas.getContext('2d')
 let gameStarted = false
 const keys = []
 const friction = 0.8
-//const gravity = 0.98//0.98
 const platforms = []
 platform_width = 120
 platform_height = 20
 let interval
 
-
 // players and boards
 const images = {
-    boardBat1: './images/buildingsBat.jpg',
-    buildings: './images/buildings1.png',
-    boardBat3: './images/wallpaperBat.png',
-    gotham: './images/gotham.png',
+    introLego: './images/introLego.png',
+    gotham: './images/wallpaperBat.png',
     batmanR: './images/batmanR.png',
     batmanL: './images/batmanL.png',
-    batmanF: './images/batmanF.png',
     supermanL: './images/supermanFL.png',
     supermanR: './images/supermanFR.png',
     joker: './images/joker.png',
     bane: './images/bane.png',
-    spaceShip: './images/spaceShip.png'        // 20386 × 330 54 frames
+    spaceShip: './images/spaceShip.png'// 15444 × 250 54 frames
 }
+
 
 //  board game
 class BatBoard {
@@ -50,10 +46,10 @@ class BatBoard {
 }
 
 class Character {
-    constructor(dx,dy,img,sw,sh,g=.98) {
+    constructor(dx, dy, img, sw, sh, g = .98) {
         this.img = new Image()
         this.img.src = img
-        this.sx = 0 
+        this.sx = 0
         this.sy = 0
         this.sw = sw
         this.sh = sh
@@ -70,24 +66,24 @@ class Character {
     }
     draw() {
         ctx.drawImage(
-            this.img, 
-            this.sx, 
-            this.sy, 
-            this.sw, 
-            this.sh, 
-            this.dx, 
-            this.dy, 
-            this.sw, 
+            this.img,
+            this.sx,
+            this.sy,
+            this.sw,
+            this.sh,
+            this.dx,
+            this.dy,
+            this.sw,
             this.sh)
     }
 
 }
 
-class SpaceShip{
-    constructor(dx,dy,img,sw,sh){
+class SpaceShip {
+    constructor(dx, dy, img, sw, sh) {
         this.img = new Image()
         this.img.src = img
-        this.sx = 0 
+        this.sx = 0
         this.sy = 0
         this.sw = sw
         this.sh = sh
@@ -100,32 +96,28 @@ class SpaceShip{
     }
     draw() {
         ctx.drawImage(
-            this.img, 
-            this.sx, 
-            this.sy, 
-            this.sw, 
-            this.sh, 
-            this.dx, 
-            this.dy, 
-            this.sw, 
+            this.img,
+            this.sx,
+            this.sy,
+            this.sw,
+            this.sh,
+            this.dx,
+            this.dy,
+            this.sw,
             this.sh)
 
-            this.sx += 377.5
-             if (this.sx > (20386-377.5)) this.sx = 0
+        this.sx += this.sw
+        if (this.sx > (this.img.width - this.sw)) this.sx = 0
     }
 }
 
 
+// Objects
+const boardBatman = new BatBoard(images.gotham)
+const spaceShip = new SpaceShip(canvas.width / 2, 0, images.spaceShip, 286, 250)
+const batman = new Character(5, canvas.height - 170, images.batmanR, 168, 160)//168,160
+const superman = new Character(canvas.width - 200, canvas.height / 2, images.supermanR, 130, 160, .5)
 
-const boardBatman = new BatBoard(images.boardBat3)
-const spaceShip = new SpaceShip(canvas.width/2,0,images.spaceShip,377.5,330)
-const batman = new Character(5,canvas.height - 170, images.batmanR,168,160)
-const superman = new Character(canvas.width - 200,canvas.height/2, images.supermanR,130,160,.5)
-/*const bane = new Character(200,0,images.bane,70,93)
-const mario = new Character(100,50,images.mario,40,40) */
-
-// Platforms
-// ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
 platforms.push({
     x: canvas.width - 170,
     y: 400,
@@ -165,27 +157,47 @@ document.body.addEventListener('keydown', e => {
     if (e.keyCode == 13 && !gameStarted) {
         startGame()
     }
-    //para movimiento
+    // MOVE
     keys[e.keyCode] = true
 })
 
-//para movimiento
+//Move
 document.body.addEventListener('keyup', e => {
     keys[e.keyCode] = false
 })
 
 function intro_screen() {
-    ctx.font = '20px Arial'
-    ctx.fillText('Press Enter To Start', canvas.width / 2, canvas.height / 2 + 50)
+    
+    img = new Image()
+    img.src = images.introLego
+    if(!gameStarted) {
+            let sx = 1100*15
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(
+                img,
+                sx,
+                0,
+                1100,
+                600,
+                0,
+                0,
+                1100,
+                600)
+            ctx.font = '50px Arial'
+            ctx.fillStyle='white'
+            ctx.fillText('Click StartGame', canvas.width / 2, canvas.height / 2)
+            sx += 1100*15
+            if (sx > 20300-600) sx = 0
+    }
 }
 
 function startGame() {
     gameStarted = true
-    if (interval) return // tal vez aqui
+    if (interval) return
     interval = setInterval(update, 1000 / 60)
 }
 
-// platforms
+// Platforms
 function drawPlatforms() {
     ctx.fillStyle = 'gray'
     platforms.map(platform =>
@@ -195,15 +207,16 @@ function drawPlatforms() {
 
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    boardBatman.draw() 
+    boardBatman.draw()
     drawPlatforms()
     batman.draw()
     superman.draw()
     spaceShip.draw()
 
+    /*----------BATMAN-----------*/
     //jump Batman
     if (keys[38]) {
-        if (!batman.jumping) {  
+        if (!batman.jumping) {
             batman.velY = -batman.jumpStrength * 4
             batman.jumping = true
         }
@@ -249,10 +262,11 @@ function update() {
     if (batman.grounded) {
         batman.velY = 0
     }
-   //----------------SUPERMAN-------------------------
+
+    /*----------------SUPERMAN-------------------------*/
     //jump superman
     if (keys[87]) {
-        if (!superman.jumping) {  
+        if (!superman.jumping) {
             superman.velY = -superman.jumpStrength * 4
             superman.jumping = true
         }
@@ -300,7 +314,6 @@ function update() {
     }
 }
 
-
 function collisionCheck(char, plat) {
     const vectorX = char.dx + char.sw / 2 - (plat.x + plat.width / 2)
     const vectorY = char.dy + char.sh / 2 - (plat.y + plat.height / 2)
@@ -335,192 +348,5 @@ function collisionCheck(char, plat) {
     return collisionDirection
 }
 
+setInterval(intro_screen, 1000 / 60)
 
-intro_screen()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-// drawing platforms
-function drawPlatforms() {
-    ctx.fillStyle = 'gray'
-    platforms.map(platform =>
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
-    )
-}
-
-function startGame() {
-    gameStarted = true
-    if (interval) return // tal vez aqui
-    interval = setInterval(update, 1000 / 60)
-  }
-
-  // platforms
-  function drawPlatforms() {
-    ctx.fillStyle = 'gray'
-    platforms.map(platform =>
-      ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
-    )
-  }
-
-  function update() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    boardBatman.draw()
-    drawPlatforms()
-    player.draw()
-
-    //jump
-    if (keys[38] || keys[32]) {
-      if (!player.jumping) {
-        player.velY = -player.jumpStrength * 4
-        player.jumping = true
-      }
-    }
-
-    //movimiento
-    if (keys[39]) {
-      if (player.velX < player.speed) {
-        player.velX++
-      }
-    }
-
-    if (keys[37]) {
-      if (player.velX > -player.speed) {
-        player.velX--
-      }
-    }
-
-    //jump
-    player.y += player.velY
-    player.velY += gravity
-
-    //movimiento
-    player.x += player.velX
-    player.velX *= friction
-
-    //collition
-    batman.grounded = false
-    platforms.map(platform => {
-      const direction = collisionCheck(batman, platform)
-      if (direction == 'left' || direction == 'right') {
-        batman.velX = 0
-      } else if (direction == 'bottom') {
-        batman.jumping = false
-        batman.grounded = true
-      } else if (direction == 'top') {
-        batman.velY *= -1
-      }
-    })
-
-    if (player.grounded) {
-      player.velY = 0
-    }
-  }
-
-/*
-function collisionCheck(char, plat) {
-    const vectorX = char.x + char.width / 2 - (plat.x + plat.width / 2)
-    const vectorY = char.y + char.height / 2 - (plat.y + plat.height / 2)
-    console.log(vectorY)
-    const halfWidths = char.width / 2 + plat.width / 2
-    const halfHeights = char.height / 2 + plat.height / 2
-
-    let collisionDirection = null
-
-    if (Math.abs(vectorX) < halfWidths && Math.abs(vectorY) < halfHeights) {
-        var offsetX = halfWidths - Math.abs(vectorX)
-        var offsetY = halfHeights - Math.abs(vectorY)
-        if (offsetX < offsetY) {
-            if (vectorX > 0) {
-                collisionDirection = 'left'
-                char.x += offsetX
-            } else {
-                collisionDirection = 'right'
-                char.x -= offsetX
-            }
-        } else {
-            if (vectorY > 0) {
-                collisionDirection = 'top'
-                char.y += offsetY
-            } else {
-                collisionDirection = 'bottom'
-                char.y -= offsetY
-            }
-        }
-    }
-    return collisionDirection
-}*/
-/*
-function startGame() {
-    gameStarted = true
-    if (interval) return
-    interval = setInterval(update, 1000 / 500)
-}
-
-document.body.addEventListener('keydown', e => {
-    if (e.keyCode == 13 && !gameStarted) {
-        startGame()
-    }
-    //para movimiento
-    keys[e.keyCode] = true
-})
-
-//para movimiento
-document.body.addEventListener('keyup', e => {
-    keys[e.keyCode] = false
-})
-
-function intro_screen() {
-    ctx.font = '20px Arial'
-    ctx.fillText('Press Enter To Start', canvas.width / 2, canvas.height / 2 + 50)
-}*/
-
-
-//intro_screen()
-/*
-// EVENT
-addEventListener('keydown', e => {
-    if (e.keyCode == 32) startGame()
-    else if (e.keyCode == 39) batman.moveRight()
-    else if (e.keyCode == 37) batman.moveLeft()
-    else if (e.keyCode == 38) batman.moveUp()
-    else if (e.keyCode == 40) batman.moveDown()
-})
-*/
-/* addEventListener('keydown',e =>{
-    switch(e.keyCode){
-        case 68:
-          return superman.moveRight()
-        case 65:
-          return superman.moveLeft()
-        case 87:
-          return superman.moveUp()
-        case 83:
-          return superman.moveDown()
-      }
-})
-*/

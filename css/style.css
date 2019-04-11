@@ -1,4 +1,6 @@
 
-canvas{
-    margin-left:5vw;
+.card{
+   background-image: './images/backgroundLego.png'; 
+   background-repeat: repeat;
 }
+
