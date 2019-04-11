@@ -24,7 +24,7 @@ const images = {
     supermanR: './images/supermanFR.png',
     joker: './images/joker.png',
     bane: './images/bane.png',
-    spaceShip: './images/spaceship.png'        // 20386 × 330 54 frames
+    spaceShip: './images/spaceShip.png'        // 20386 × 330 54 frames
 }
 
 //  board game
