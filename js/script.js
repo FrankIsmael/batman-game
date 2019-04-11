@@ -11,7 +11,7 @@ let interval
 
 // players and boards
 const images = {
-    introLego: './images/introLego.png',
+    introLego: './images/introLego-min.png',
     gotham: './images/wallpaperBat.png',
     batmanR: './images/batmanR.png',
     batmanL: './images/batmanL.png',
@@ -111,8 +111,8 @@ class SpaceShip {
     }
 }
 
-class powerCharacter {
-    constructor(img){
+class weaponCharacter {
+    constructor(img,hero){
         this.img = new Image()
         this.img.src = img
         this.sx = 0
@@ -124,9 +124,12 @@ class powerCharacter {
         this.speed = 5
         this.velX = 0
         this.velY = 0
+        this.hero = hero
     }
-    draw() {
-        ctx.drawImage(
+    // draw weapon batman 
+    drawImage() {
+        if(this.hero == 'batman'){
+            ctx.drawImage(
             this.img,
             this.sx,
             this.sy,
@@ -136,7 +139,12 @@ class powerCharacter {
             this.dy,
             this.sw,
             this.sh)
+        }
     }
+    drawLine() {
+        // draw weapon superman
+    }
+    
 }
 
 
@@ -165,7 +173,7 @@ function Intro() {
         )
         ctx.font = '50px Arial'
         ctx.fillStyle = 'white'
-        ctx.fillText('Click StartGame', 400, 300)
+        ctx.fillText('LEGO GAME', 400, 300)
     }
 }
 
