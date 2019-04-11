@@ -111,12 +111,75 @@ class SpaceShip {
     }
 }
 
+class powerCharacter {
+    constructor(img){
+        this.img = new Image()
+        this.img.src = img
+        this.sx = 0
+        this.sy = 0
+        this.sw = sw
+        this.sh = sh
+        this.dx = dx
+        this.dy = dy
+        this.speed = 5
+        this.velX = 0
+        this.velY = 0
+    }
+    draw() {
+        ctx.drawImage(
+            this.img,
+            this.sx,
+            this.sy,
+            this.sw,
+            this.sh,
+            this.dx,
+            this.dy,
+            this.sw,
+            this.sh)
+    }
+}
+
 
 // Objects
 const boardBatman = new BatBoard(images.gotham)
 const spaceShip = new SpaceShip(canvas.width / 2, 0, images.spaceShip, 286, 250)
 const batman = new Character(5, canvas.height - 170, images.batmanR, 168, 160)//168,160
 const superman = new Character(canvas.width - 200, canvas.height / 2, images.supermanR, 130, 160, .5)
+let xI = 0
+function Intro() {
+    img = new Image()
+    img.src = images.introLego
+    if (!gameStarted) {
+        ctx.fillStyle = 'black'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(
+            img,
+            xI,
+            0,
+            1200,
+            1200,
+            0,
+            -300,
+            1200,
+            1200
+        )
+        ctx.font = '50px Arial'
+        ctx.fillStyle = 'white'
+        ctx.fillText('Click StartGame', 400, 300)
+    }
+}
+
+function updateIntro() {
+    if (!gameStarted) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        Intro()
+        xI += 1200
+        if (xI > 22800) xI = 0
+    }
+}
+
+setInterval(updateIntro, 1000 / 12)
+
 
 platforms.push({
     x: canvas.width - 170,
@@ -154,9 +217,9 @@ platforms.push({
 })
 
 document.body.addEventListener('keydown', e => {
-    if (e.keyCode == 13 && !gameStarted) {
+    /*if (e.keyCode == 13 && !gameStarted) {
         startGame()
-    }
+    }*/
     // MOVE
     keys[e.keyCode] = true
 })
@@ -166,28 +229,10 @@ document.body.addEventListener('keyup', e => {
     keys[e.keyCode] = false
 })
 
-function intro_screen() {
-    
-    img = new Image()
-    img.src = images.introLego
-    if(!gameStarted) {
-            let sx = 1100*15
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.drawImage(
-                img,
-                sx,
-                0,
-                1100,
-                600,
-                0,
-                0,
-                1100,
-                600)
-            ctx.font = '50px Arial'
-            ctx.fillStyle='white'
-            ctx.fillText('Click StartGame', canvas.width / 2, canvas.height / 2)
-            sx += 1100*15
-            if (sx > 20300-600) sx = 0
+let button = document.getElementById("button");
+button.onclick = function () {
+    if (!gameStarted) {
+        startGame()
     }
 }
 
@@ -249,7 +294,7 @@ function update() {
     //collition batman-platforms
     batman.grounded = false
     platforms.map(platform => {
-        const direction = collisionCheck(batman, platform)
+        const direction = collisionCheck(batman, platform)//platform
         if (direction == 'left' || direction == 'right') {
             batman.velX = 0
         } else if (direction == 'bottom') {
@@ -299,7 +344,7 @@ function update() {
     //collition superman-platforms
     superman.grounded = false
     platforms.map(platform => {
-        const direction = collisionCheck(superman, platform)
+        const direction = collisionCheck(superman, platform)//platform
         if (direction == 'left' || direction == 'right') {
             superman.velX = 0
         } else if (direction == 'bottom') {
@@ -348,5 +393,5 @@ function collisionCheck(char, plat) {
     return collisionDirection
 }
 
-setInterval(intro_screen, 1000 / 60)
+
 
