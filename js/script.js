@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d')
 
 let gameStarted = false
 const keys = []
+let weaponsArr = []
 const friction = 0.8
 const platforms = []
 platform_width = 120
@@ -19,9 +20,9 @@ const images = {
     supermanR: './images/supermanFR.png',
     joker: './images/joker.png',
     bane: './images/bane.png',
-    spaceShip: './images/spaceShip.png'// 15444 × 250 54 frames
+    spaceShip: './images/spaceShip.png',// 15444 × 250 54 frames
+    batarang: './images/batarang4.png'
 }
-
 
 //  board game
 class BatBoard {
@@ -63,6 +64,7 @@ class Character {
         this.grounded = false
         this.gravity = g
         this.health = 5
+        this.direction = ''
     }
     draw() {
         ctx.drawImage(
@@ -76,59 +78,53 @@ class Character {
             this.sw,
             this.sh)
     }
-
 }
 
+
+function generateWeapon(x,y){
+    const weapon = new WeaponCharacter(x,y)
+    weaponsArr.push(weapon)
+}
+function drawWeapon(){
+    weaponsArr.forEach((shoot) => {
+        if(shoot.status===1) shoot.draw()
+        shoot.velX ++
+
+        shoot.x += shoot.velX
+        shoot.velX *= friction 
+    })
+}
+function checkCollisionWeapons(){
+    weaponsArr.forEach((shoot)=>{
+        if(spaceShip.isTouching(shoot) && spaceShip.status == 1 && shoot.status==1){
+            spaceShip.health --
+            if(spaceShip.health == 0) spaceShip.status = 0
+            shoot.status = 0
+        }
+    })
+}
+
+
+
 class SpaceShip {
-    constructor(dx, dy, img, sw, sh) {
+    constructor(img, sw, sh) {
         this.img = new Image()
         this.img.src = img
         this.sx = 0
         this.sy = 0
         this.sw = sw
         this.sh = sh
-        this.dx = dx
-        this.dy = dy
-        this.speed = 5
+        this.dx = Math.floor(Math.random() * (canvas.width - 250))
+        this.dy = Math.floor(Math.random() * 200)
+        this.speed = 1
         this.velX = 0
         this.velY = 0
         this.health = 10
+        this.status = 1
     }
+
     draw() {
-        ctx.drawImage(
-            this.img,
-            this.sx,
-            this.sy,
-            this.sw,
-            this.sh,
-            this.dx,
-            this.dy,
-            this.sw,
-            this.sh)
-
-        this.sx += this.sw
-        if (this.sx > (this.img.width - this.sw)) this.sx = 0
-    }
-}
-
-class weaponCharacter {
-    constructor(img,hero){
-        this.img = new Image()
-        this.img.src = img
-        this.sx = 0
-        this.sy = 0
-        this.sw = sw
-        this.sh = sh
-        this.dx = dx
-        this.dy = dy
-        this.speed = 5
-        this.velX = 0
-        this.velY = 0
-        this.hero = hero
-    }
-    // draw weapon batman 
-    drawImage() {
-        if(this.hero == 'batman'){
+        if(spaceShip.status == 1){
             ctx.drawImage(
             this.img,
             this.sx,
@@ -139,20 +135,59 @@ class weaponCharacter {
             this.dy,
             this.sw,
             this.sh)
+
+        this.dx++
+        if (this.dx == 0) this.velX++
+        if (this.dx == (canvas.width - 250)) this.velX--
+        this.dx += this.velX
+        this.sx += this.sw
+        if (this.sx > (this.img.width - this.sw)) this.sx = 0
+        } else {
+            ctx.font = '50px Arial'
+        ctx.fillStyle = 'white'
+        ctx.fillText('SpaceShip XX', 400, 300)
         }
+        
     }
-    drawLine() {
-        // draw weapon superman
-    }
-    
+    isTouching(shoot) {
+        return  (this.x < shoot.x + shoot.width) &&
+                (this.x + this.width > shoot.x) &&
+                (this.y < shoot.y + shoot.height) &&
+                (this.y + this.height > shoot.y)
+      }
 }
 
+class WeaponCharacter {
+    constructor(x,y) {
+        this.x = x
+        this.y = y
+        this.sw = 367
+        this.sh = 367
+        this.img = new Image()
+        this.img.src = images.batarang
+
+        this.speed = 5
+        this.velX = 0
+        this.velY = 0
+        this.status = 1
+    }
+    draw() {
+        ctx.drawImage(
+            this.img,
+            this.x,
+            this.y,
+            this.sw/5,
+            this.sh/5)
+            this.x ++
+    }
+}
 
 // Objects
 const boardBatman = new BatBoard(images.gotham)
-const spaceShip = new SpaceShip(canvas.width / 2, 0, images.spaceShip, 286, 250)
-const batman = new Character(5, canvas.height - 170, images.batmanR, 168, 160)//168,160
+const spaceShip = new SpaceShip(images.spaceShip, 286, 250)
+const batman = new Character(5, canvas.height - 170, images.batmanR, 168, 160, .8)//168,160
 const superman = new Character(canvas.width - 200, canvas.height / 2, images.supermanR, 130, 160, .5)
+const weap = new WeaponCharacter(100,100)
 let xI = 0
 function Intro() {
     img = new Image()
@@ -190,29 +225,15 @@ setInterval(updateIntro, 1000 / 12)
 
 
 platforms.push({
-    x: canvas.width - 170,
+    x: canvas.width - 340,
     y: 400,
     width: platform_width,
     height: platform_height
 })
 
 platforms.push({
-    x: 200,
-    y: canvas.height - 50,
-    width: platform_width,
-    height: platform_height
-})
-
-platforms.push({
-    x: 400,
+    x: 300,
     y: 400,
-    width: platform_width,
-    height: platform_height
-})
-
-platforms.push({
-    x: canvas.width - 170,
-    y: canvas.height - 50,
     width: platform_width,
     height: platform_height
 })
@@ -225,10 +246,6 @@ platforms.push({
 })
 
 document.body.addEventListener('keydown', e => {
-    /*if (e.keyCode == 13 && !gameStarted) {
-        startGame()
-    }*/
-    // MOVE
     keys[e.keyCode] = true
 })
 
@@ -257,7 +274,7 @@ function drawPlatforms() {
         ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
     )
 }
-
+let frames = 0
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     boardBatman.draw()
@@ -265,6 +282,13 @@ function update() {
     batman.draw()
     superman.draw()
     spaceShip.draw()
+    weap.draw()
+
+    drawWeapon()
+    checkCollisionWeapons()
+    frames ++
+    
+    //weap.draw()
 
     /*----------BATMAN-----------*/
     //jump Batman
@@ -277,6 +301,7 @@ function update() {
     //move +x
     if (keys[39]) {
         batman.img.src = images.batmanR
+        batman.direction = 'R'
         if (batman.velX < batman.speed) {
             batman.velX++
         }
@@ -286,12 +311,21 @@ function update() {
     //move -x
     if (keys[37]) {
         batman.img.src = images.batmanL
+        batman.direction = 'L'
         if (batman.velX > -batman.speed) {
             batman.velX--
         }
         batman.sx += 168
         if (batman.sx > 3192) batman.sx = 0
+
     }
+
+    if (keys[16]) {
+        if(frames%5){
+           return generateWeapon(batman.dx + 50, batman.dy) 
+        }
+    }
+
     //jump batman
     batman.dy += batman.velY
     batman.velY += batman.gravity
@@ -315,6 +349,7 @@ function update() {
     if (batman.grounded) {
         batman.velY = 0
     }
+
 
     /*----------------SUPERMAN-------------------------*/
     //jump superman
