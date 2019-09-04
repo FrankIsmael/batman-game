@@ -21,7 +21,8 @@ const images = {
     joker: './images/joker.png',
     bane: './images/bane.png',
     spaceShip: './images/spaceShip.png',// 15444 × 250 54 frames
-    batarang: './images/batarang4.png'
+    batarang: './images/batarang4.png',
+    platform: './images/backgroundPlatform.png'
 }
 
 //  board game
@@ -81,24 +82,24 @@ class Character {
 }
 
 
-function generateWeapon(x,y){
-    const weapon = new WeaponCharacter(x,y)
+function generateWeapon(x, y) {
+    const weapon = new WeaponCharacter(x, y)
     weaponsArr.push(weapon)
 }
-function drawWeapon(){
+function drawWeapon() {
     weaponsArr.forEach((shoot) => {
-        if(shoot.status===1) shoot.draw()
-        shoot.velX ++
+        if (shoot.status === 1) shoot.draw()
+        shoot.velX++
 
         shoot.x += shoot.velX
-        shoot.velX *= friction 
+        shoot.velX *= friction
     })
 }
-function checkCollisionWeapons(){
-    weaponsArr.forEach((shoot)=>{
-        if(spaceShip.isTouching(shoot) && spaceShip.status == 1 && shoot.status==1){
-            spaceShip.health --
-            if(spaceShip.health == 0) spaceShip.status = 0
+function checkCollisionWeapons() {
+    weaponsArr.forEach((shoot) => {
+        if (spaceShip.isTouching(shoot) && spaceShip.status == 1 && shoot.status == 1) {
+            spaceShip.health--
+            if (spaceShip.health == 0) spaceShip.status = 0
             shoot.status = 0
         }
     })
@@ -124,41 +125,41 @@ class SpaceShip {
     }
 
     draw() {
-        if(spaceShip.status == 1){
+        if (spaceShip.status == 1) {
             ctx.drawImage(
-            this.img,
-            this.sx,
-            this.sy,
-            this.sw,
-            this.sh,
-            this.dx,
-            this.dy,
-            this.sw,
-            this.sh)
+                this.img,
+                this.sx,
+                this.sy,
+                this.sw,
+                this.sh,
+                this.dx,
+                this.dy,
+                this.sw,
+                this.sh)
 
-        this.dx++
-        if (this.dx == 0) this.velX++
-        if (this.dx == (canvas.width - 250)) this.velX--
-        this.dx += this.velX
-        this.sx += this.sw
-        if (this.sx > (this.img.width - this.sw)) this.sx = 0
+            this.dx++
+            if (this.dx == 0) this.velX++
+            if (this.dx == (canvas.width - 250)) this.velX--
+            this.dx += this.velX
+            this.sx += this.sw
+            if (this.sx > (this.img.width - this.sw)) this.sx = 0
         } else {
             ctx.font = '50px Arial'
-        ctx.fillStyle = 'white'
-        ctx.fillText('SpaceShip XX', 400, 300)
+            ctx.fillStyle = 'white'
+            ctx.fillText('SpaceShip XX', 400, 300)
         }
-        
+
     }
     isTouching(shoot) {
-        return  (this.x < shoot.x + shoot.width) &&
-                (this.x + this.width > shoot.x) &&
-                (this.y < shoot.y + shoot.height) &&
-                (this.y + this.height > shoot.y)
-      }
+        return (this.x < shoot.x + shoot.width) &&
+            (this.x + this.width > shoot.x) &&
+            (this.y < shoot.y + shoot.height) &&
+            (this.y + this.height > shoot.y)
+    }
 }
 
 class WeaponCharacter {
-    constructor(x,y) {
+    constructor(x, y) {
         this.x = x
         this.y = y
         this.sw = 367
@@ -176,9 +177,9 @@ class WeaponCharacter {
             this.img,
             this.x,
             this.y,
-            this.sw/5,
-            this.sh/5)
-            this.x ++
+            this.sw / 5,
+            this.sh / 5)
+        this.x++
     }
 }
 
@@ -187,7 +188,7 @@ const boardBatman = new BatBoard(images.gotham)
 const spaceShip = new SpaceShip(images.spaceShip, 286, 250)
 const batman = new Character(5, canvas.height - 170, images.batmanR, 168, 160, .8)//168,160
 const superman = new Character(canvas.width - 200, canvas.height / 2, images.supermanR, 130, 160, .5)
-const weap = new WeaponCharacter(100,100)
+const weap = new WeaponCharacter(100, 100)
 let xI = 0
 function Intro() {
     img = new Image()
@@ -270,8 +271,15 @@ function startGame() {
 // Platforms
 function drawPlatforms() {
     ctx.fillStyle = 'gray'
-    platforms.map(platform =>
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
+    platforms.map(platform => {
+        var img = new Image();
+        img.src = images.platform
+        
+            var pattern = ctx.createPattern(img, 'repeat');
+            ctx.fillStyle = pattern;
+            ctx.fillRect(platform.x, platform.y, platform.width, platform.height)
+        }
+
     )
 }
 let frames = 0
@@ -286,8 +294,8 @@ function update() {
 
     drawWeapon()
     checkCollisionWeapons()
-    frames ++
-    
+    frames++
+
     //weap.draw()
 
     /*----------BATMAN-----------*/
@@ -321,8 +329,8 @@ function update() {
     }
 
     if (keys[16]) {
-        if(frames%5){
-           return generateWeapon(batman.dx + 50, batman.dy) 
+        if (frames % 5) {
+            return generateWeapon(batman.dx + 50, batman.dy)
         }
     }
 
